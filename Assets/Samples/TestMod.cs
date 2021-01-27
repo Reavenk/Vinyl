@@ -82,6 +82,29 @@ public class TestMod : MonoBehaviour
             foreach (ChannelPlayhead cph in this.playCtx.channelPlays)
             { 
                 GUILayout.Label( $"Layer {cph.channel}");
+
+                if(cph.streamingSample == true)
+                {
+                    GUILayout.Label($"\tStreaming true");
+                }
+                else
+                {
+                    GUILayout.Label($"\tStreaming false");
+                    GUI.color = Color.gray;
+                }
+
+                GUILayout.Label($"\tVolume {cph.vol}");
+
+                ModFile.Sample sample = cph.curSample;
+
+                if(sample != null)
+                    GUILayout.Label($"\tSample {sample.name}");
+                else
+                    GUILayout.Label($"\tSample NONE");
+
+                GUILayout.Label($"\tPeriod {cph.period}");
+
+                GUI.color = Color.white;
             }
 
             if(GUILayout.Button("Restart") == true)

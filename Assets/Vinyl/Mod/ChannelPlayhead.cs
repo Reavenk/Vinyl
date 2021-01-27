@@ -79,12 +79,12 @@ namespace Vinyl.Mod
         /// </summary>
         /// <remarks>If this value is updated, UpdateVolume() should be called to 
         /// recalculate the final volume.</remarks>
-        int vol64 = 64;
+        public int vol64 {get; protected set; } = 64;
 
         /// <summary>
         /// The actual used volume in floating point [0.0, 1.0] range.
         /// </summary>
-        float vol = 1.0f;
+        public float vol {get; protected set; } = 1.0f;
 
         /// <summary>
         /// Reference to the song being played.
@@ -94,13 +94,13 @@ namespace Vinyl.Mod
         /// <summary>
         /// The channel data in the song for our channel that we're currently processing.
         /// </summary>
-        ModFile.Channel channelData = null;
+        public ModFile.Channel channelData {get; protected set; } = null;
 
         /// <summary>
         /// The sample that's currently being played, or the last played sample that's 
         /// being remembered for a possible later operation.
         /// </summary>
-        ModFile.Sample curSample = null;
+        public ModFile.Sample curSample {get; protected set; } = null;
 
         /// <summary>
         /// If true, curSample is currently being written out into the audio buffer. If
@@ -108,7 +108,7 @@ namespace Vinyl.Mod
         /// has already finished playing and doesn't loop, or it's being suppressed by
         /// an effect.
         /// </summary>
-        bool streamingSample = false;
+        public bool streamingSample {get; protected set; } = false;
 
         /// <summary>
         /// The current PCM sample being written from our audio sample (curSample). This
@@ -135,7 +135,7 @@ namespace Vinyl.Mod
         /// <summary>
         /// The current period we're playing samples in.
         /// </summary>
-        int period = 0;
+        public int period {get; protected set; } = 0;
 
         /// <summary>
         /// The ideal period we want to be playing. Usually period and targetPeriod will
