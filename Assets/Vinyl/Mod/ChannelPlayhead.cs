@@ -429,6 +429,8 @@ namespace Vinyl.Mod
                         else if (this.vibratoRetrigger == false)
                             resetVib = false;
 
+                        this.vibratoUsed = ProcessWaveform(this.vibratoUsed);
+
                         break;
 
                     case Effect.SlideCont:
@@ -450,6 +452,8 @@ namespace Vinyl.Mod
                             this.lastEffect = Effect.None;
                         else if (this.tremoloRetrigger == false)
                             resetTrem = false;
+
+                        this.tremoloUsed = ProcessWaveform(this.tremoloForm);
                         break;
 
                     case Effect.SetPan:
@@ -536,8 +540,8 @@ namespace Vinyl.Mod
                         break;
 
                     case Effect.SetTremoloForm:
-                        GetFormData(effectParam2, out this.vibratoRetrigger, out this.vibratoForm);
-                        this.vibratoUsed = ProcessWaveform(this.vibratoForm);
+                        GetFormData(effectParam2, out this.vibratoRetrigger, out this.tremoloForm);
+                        this.vibratoUsed = ProcessWaveform(this.tremoloForm);
                         break;
 
                     case Effect.Unused:
@@ -949,7 +953,7 @@ namespace Vinyl.Mod
                                 float s2 = this.curSample.pcm[ns1];
 
                                 double wavePortion = 0.0;
-                                switch (this.vibratoUsed)
+                                switch (this.tremoloUsed)
                                 {
                                     case EffectWaveform.Random:
                                         break;
