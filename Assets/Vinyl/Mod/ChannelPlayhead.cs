@@ -224,9 +224,6 @@ namespace Vinyl.Mod
         {
             this.channel = channel;
             this.ctx = ctx;
-
-            this.OnChangeSequence(0);
-            this.OnChangeDiv(0, 0);
         }
 
         /// <summary>

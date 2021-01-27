@@ -177,12 +177,18 @@ namespace Vinyl.Mod
             for(int i = 0; i < this.song.channelsCt; ++i)
                 this.channelPlays[i] = new ChannelPlayhead(this, i);
 
+            for (int i = 0; i < this.song.channelsCt; ++i)
+                this.channelPlays[i].OnChangeSequence(0);
+
+            this.PerformChangeDivNotification();
+
             this.UpdateTimingCache();
 
             this.playState = 
                 (looping == true) ? 
                     PlayState.Looping : 
                     PlayState.Playing;
+
         }
 
         /// <summary>
