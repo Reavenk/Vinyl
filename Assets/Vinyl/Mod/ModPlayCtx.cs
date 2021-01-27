@@ -324,11 +324,15 @@ namespace Vinyl.Mod
                             if(this.positionJump != -1)
                             { 
                                 this.curDiv = Mathf.Clamp(this.positionJump, 0, 63);
+                                this.UpdateTimingCache();
+                                this.samplesInSong = this.curSeqStart;
                                 this.positionJump = -1;
                             }
                             else if(this.sequenceJump != -1)
                             { 
                                 this.curSeq = Mathf.Clamp(this.sequenceJump, 0, this.song.sequences.Length);
+                                this.UpdateTimingCache();
+                                this.samplesInSong = this.curSeqStart;
                                 this.sequenceJump = -1;
                             }
 
@@ -340,6 +344,8 @@ namespace Vinyl.Mod
                                 else if(this.song.restartPos < this.song.sequences.Length)
                                 {
                                     this.curSeq = this.song.restartPos;
+                                    this.UpdateTimingCache();
+                                    this.samplesInSong = this.curSeqStart;
                                     stopped = false;
                                 }
                                 else if(this.playState == PlayState.Looping)
@@ -433,6 +439,7 @@ namespace Vinyl.Mod
                 cpi.OnChangeSequence(0);
             }
 
+            this.UpdateTimingCache();
             this.PerformChangeDivNotification();
         }
 
