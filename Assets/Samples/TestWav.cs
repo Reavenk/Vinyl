@@ -194,10 +194,6 @@ public class TestWav : MonoBehaviour
                 System.IO.BinaryWriter bw = new System.IO.BinaryWriter(fs);
                 PxPre.Vinyl.Wav.WAVUtils.CreateSimpleWavBinary(bw, rd, 44100, 1);
             }
-
-            if (GUILayout.Button("Export OGG") == true)
-            {
-            }
         }
 
         GUILayout.EndScrollView();
