@@ -83,6 +83,22 @@ public class TestMod : MonoBehaviour
             { 
                 GUILayout.Label( $"Layer {cph.channel}");
             }
+
+            if(GUILayout.Button("Restart") == true)
+            {
+                this.playCtx.Restart();
+                this.playCtx.Play();
+            }
+
+            if(GUILayout.Button("Stop") == true)
+            {
+                this.playCtx.Stop();
+            }
+
+            if(GUILayout.Button("Play") == true)
+            { 
+                this.playCtx.Play();
+            }
         }
 
         if(this.loadedSong != null)

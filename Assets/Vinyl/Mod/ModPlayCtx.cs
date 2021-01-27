@@ -422,7 +422,7 @@ namespace Vinyl.Mod
         /// <summary>
         /// Restart the song.
         /// </summary>
-        void Restart()
+        public void Restart()
         {
             this.curSeq = 0;
             this.curDiv = 0;
@@ -434,6 +434,22 @@ namespace Vinyl.Mod
             }
 
             this.PerformChangeDivNotification();
+        }
+
+        public void Play()
+        { 
+            if(this.playState != PlayState.Stopped)
+                return;
+
+            if(this.curSeq >= this.song.songLength)
+                this.Restart();
+
+            this.playState = PlayState.Playing;
+        }
+
+        public void Stop()
+        { 
+            this.playState = PlayState.Stopped;
         }
 
         /// <summary>
