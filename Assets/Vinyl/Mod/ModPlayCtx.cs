@@ -295,7 +295,7 @@ namespace Vinyl.Mod
                     pcm[i] = (float)System.Math.Tanh(pcm[i]);
                 }
 
-
+                start += writeAmt;
                 samples -= writeAmt;
                 this.samplesInSong += writeAmt;
 
