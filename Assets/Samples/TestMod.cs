@@ -63,6 +63,9 @@ public class TestMod : MonoBehaviour
             if (GUILayout.Button("Loop") == true)
                 this.LoadAndPlay(s, true);
 
+            if(GUILayout.Button("WWW") == true)
+                this.WebTest(s.path);
+
             GUILayout.EndHorizontal();
         }
 
@@ -105,5 +108,34 @@ public class TestMod : MonoBehaviour
 
         GUILayout.EndScrollView();
 
+    }
+
+    void WebTest(string path)
+    { 
+        this.StartCoroutine(this.WebTestEnum(path));
+    }
+
+    IEnumerator WebTestEnum(string path)
+    {
+        path = 
+            System.IO.Path.Combine(
+                System.IO.Directory.GetCurrentDirectory(),
+                path);
+
+        WWW www = new WWW("file://" + path); 
+        yield return www;
+
+        if(string.IsNullOrEmpty(www.error) == false)
+        {
+            Debug.LogError("Download error : " + www.error);
+            yield break;
+        }
+        AudioClip ac = www.GetAudioClip();
+        Debug.Log("Audio clip of downloaded sample : " + ac.samples.ToString());
+        if(this.source == null)
+            this.source = gameObject.AddComponent<AudioSource>();
+
+        this.source.clip = ac;
+        this.source.Play();
     }
 }
