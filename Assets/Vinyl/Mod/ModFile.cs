@@ -278,7 +278,7 @@ namespace Vinyl.Mod
             if (finetSign != 0)
                 finet = -(~finet & ((1 << 3) - 1)) - 1;
             else
-                finet = (finet & (1 << 3));
+                finet = (finet & ((1 << 3) - 1));
 
             return Mathf.Pow(2.0f, finet / (12 * 8));
         }
