@@ -123,6 +123,16 @@ namespace Vinyl.Mod
         double sampleIncr = 0.0;
 
         /// <summary>
+        /// When we're at the end of the sample and ready to check for looping.
+        /// 
+        /// The first time we play, the same plays to the end, and then from there if
+        /// we're looping, we only play back to the sample's loopback + loopend. 
+        /// Usually it will be authored to be the as as the sample length, but that's
+        /// not guaranteed.
+        /// </summary>
+        int sampleEnd = 0;
+
+        /// <summary>
         /// The current period we're playing samples in.
         /// </summary>
         int period = 0;
@@ -357,6 +367,7 @@ namespace Vinyl.Mod
                 this.curSample = this.song.samples[n.sampleIdx];
                 this.streamingSample = this.curSample.length > 0;
                 this.sampleTime = 0.0;
+                this.sampleEnd = this.curSample.length;
 
                 this.targetPeriod = n.period;
 
@@ -408,7 +419,7 @@ namespace Vinyl.Mod
 
                     case Effect.Vibrato:
                         if (this.effectParam1 != 0)
-                            this.vibratoIncr = (this.effectParam1 * this.curTick) / 64.0 / this.ctx.samplesPerDiv;
+                            this.vibratoIncr = (this.effectParam1 * this.ctx.ticksPerDiv) / 64.0 / this.ctx.samplesPerDiv;
 
                         if (this.effectParam2 != 0)
                             this.vibratoSemi = this.effectParam2 / 16.0;
@@ -856,10 +867,11 @@ namespace Vinyl.Mod
                                 int ns0 = (int)this.sampleTime;
                                 int ns1 = ns0 + 1;
 
-                                if (ns1 >= this.curSample.length)
+                                if (ns1 >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
                                         ns1 = this.curSample.loopBack;
+
                                     else
                                         ns1 = this.curSample.length - 1;
 
@@ -896,10 +908,13 @@ namespace Vinyl.Mod
                                 this.sampleTime += incr;
                                 this.vibratoPos += this.vibratoIncr;
 
-                                if (this.sampleTime >= this.curSample.length)
+                                if (this.sampleTime >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
-                                        this.sampleTime = this.curSample.loopBack + this.sampleTime % this.curSample.length;
+                                    {
+                                        this.sampleTime = this.curSample.loopBack + (this.sampleTime - this.sampleEnd) % this.curSample.loopLength;
+                                        this.sampleEnd = this.curSample.loopBack + this.curSample.loopLength;
+                                    }
                                     else
                                     {
                                         streamingSample = false;
@@ -916,10 +931,13 @@ namespace Vinyl.Mod
                                 int ns0 = (int)this.sampleTime;
                                 int ns1 = ns0 + 1;
 
-                                if (ns1 >= this.curSample.length)
+                                if (ns1 >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
+                                    {
                                         ns1 = this.curSample.loopBack;
+                                        this.sampleEnd = this.curSample.loopBack + this.curSample.loopLength;
+                                    }
                                     else
                                         ns1 = this.curSample.length - 1;
 
@@ -955,10 +973,13 @@ namespace Vinyl.Mod
                                 this.sampleTime += this.sampleIncr;
                                 this.tremoloPos += this.tremoloIncr;
 
-                                if (this.sampleTime >= this.curSample.length)
+                                if (this.sampleTime >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
-                                        this.sampleTime = this.curSample.loopBack + this.sampleTime % this.curSample.length;
+                                    {
+                                        this.sampleTime = this.curSample.loopBack + (this.sampleTime - this.sampleEnd) % this.curSample.loopLength;
+                                        this.sampleEnd = this.curSample.loopBack + this.curSample.loopLength;
+                                    }
                                     else
                                     {
                                         streamingSample = false;
@@ -976,7 +997,7 @@ namespace Vinyl.Mod
                                 int ns0 = (int)this.sampleTime;
                                 int ns1 = ns0 + 1;
 
-                                if (ns1 >= this.curSample.length)
+                                if (ns1 >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
                                         ns1 = this.curSample.loopBack;
@@ -994,10 +1015,13 @@ namespace Vinyl.Mod
 
                                 this.sampleTime += this.sampleIncr;
 
-                                if (this.sampleTime >= this.curSample.length)
+                                if (this.sampleTime >= this.sampleEnd)
                                 {
                                     if (this.curSample.loopLength > 0)
-                                        this.sampleTime = this.curSample.loopBack + this.sampleTime % this.curSample.length;
+                                    {
+                                        this.sampleTime = this.curSample.loopBack + (this.sampleTime - this.sampleEnd) % this.curSample.loopLength;
+                                        this.sampleEnd = this.curSample.loopBack + this.curSample.loopLength;
+                                    }
                                     else
                                     {
                                         streamingSample = false;

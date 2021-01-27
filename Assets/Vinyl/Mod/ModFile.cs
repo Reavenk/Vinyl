@@ -196,7 +196,10 @@ namespace Vinyl.Mod
                 s.defaultVolume = vol;
 
                 s.loopBack = ReadUShort(r) * 2;
-                s.loopLength = ReadUShort(r) * 2 - 2;
+                s.loopLength = ReadUShort(r) * 2;
+
+                if(s.loopLength <= 2)
+                    s.loopLength = 0;
 
                 this.samples.Add(s);
             }
@@ -256,6 +259,14 @@ namespace Vinyl.Mod
 
                 for(int s = 0; s < samples[i].pcm.Length; ++s)
                     samples[i].pcm[s] = (float)r.ReadSByte() / 128.0f;
+
+                // The first two have some weird deal where they're the audio
+                // data as well as this other thing
+                if(samples[i].pcm.Length >= 2)
+                { 
+                    samples[i].pcm[0] = 0.0f;
+                    samples[i].pcm[1] = 0.0f;
+                }
             }
 
             return true;
