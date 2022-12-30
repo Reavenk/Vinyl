@@ -334,6 +334,8 @@ MonoBehaviour:
     path: TestMods\reissecup_-_starship.mod
   - name: tnk_-_escape_from_sqhell.mod
     path: TestMods\tnk_-_escape_from_sqhell.mod
+  - name: adkd_-_the_gift_of_love.mod
+    path: TestMods\adkd_-_the_gift_of_love.mod
 --- !u!4 &1866603903
 Transform:
   m_ObjectHideFlags: 0
