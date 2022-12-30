@@ -195,7 +195,7 @@ public class TestMod : MonoBehaviour
                 GUILayout.TextField(curBPM.ToString());
                 GUI.enabled = true;
 
-                if (GUILayout.Button("-5", GUILayout.ExpandWidth(false)))
+                if (GUILayout.Button("+5", GUILayout.ExpandWidth(false)))
                     this.playCtx.SetBPM(curBPM + 5.0f);
 
             GUILayout.EndHorizontal();
