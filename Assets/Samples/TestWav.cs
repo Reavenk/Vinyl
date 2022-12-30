@@ -41,49 +41,62 @@ public class TestWav : MonoBehaviour
         for (int i = 0; i < this.samples.Count; ++i)
         { 
             TestSample ts = this.samples[i];
-            if(GUILayout.Button(ts.label) == true)
-            {
-                this.meta = null;
+            GUILayout.BeginHorizontal();
+                GUILayout.Label(ts.label);
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Play") == true)
+                {
+                    this.meta = null;
 
-                byte [] rb = System.IO.File.ReadAllBytes(ts.path);
-                System.IO.MemoryStream memStream = new System.IO.MemoryStream(rb);
-                System.IO.BinaryReader r = new System.IO.BinaryReader(memStream);
-                this.foundChunks = PxPre.Vinyl.Wav.WAVUtils.ParseStaticChunks(r);
+                    byte [] rb = System.IO.File.ReadAllBytes(ts.path);
+                    System.IO.MemoryStream memStream = new System.IO.MemoryStream(rb);
+                    System.IO.BinaryReader r = new System.IO.BinaryReader(memStream);
+                    this.foundChunks = PxPre.Vinyl.Wav.WAVUtils.ParseStaticChunks(r);
 
-                Debug.Log(this.foundChunks.Count.ToString() + " chunks!");
+                    Debug.Log(this.foundChunks.Count.ToString() + " chunks!");
 
-                foreach(PxPre.Vinyl.Wav.ChunkTable c in this.foundChunks)
-                { 
-                    if(c.chunkID == (int)PxPre.Vinyl.Wav.ChunkID.fmt)
+                    foreach(PxPre.Vinyl.Wav.ChunkTable c in this.foundChunks)
                     { 
+                        if(c.chunkID == (int)PxPre.Vinyl.Wav.ChunkID.fmt)
+                        { 
                         
-                        memStream.Seek(c.filePos, System.IO.SeekOrigin.Begin);
-                        this.format.Read(r);
-                    }
-                    else if(c.chunkID == (int)PxPre.Vinyl.Wav.ChunkID.id3)
-                    {
-                        memStream.Seek(c.filePos, System.IO.SeekOrigin.Begin);
-                        PxPre.Vinyl.Meta.ID3_2 id32 = new PxPre.Vinyl.Meta.ID3_2();
-                        this.meta = id32.ReadToID31(r);
+                            memStream.Seek(c.filePos, System.IO.SeekOrigin.Begin);
+                            this.format.Read(r);
+                        }
+                        else if(c.chunkID == (int)PxPre.Vinyl.Wav.ChunkID.id3)
+                        {
+                            memStream.Seek(c.filePos, System.IO.SeekOrigin.Begin);
+                            PxPre.Vinyl.Meta.ID3_2 id32 = new PxPre.Vinyl.Meta.ID3_2();
+                            this.meta = id32.ReadToID31(r);
 
                         
-                        //PxPre.WavLib.ID3 id3 = new PxPre.WavLib.ID3();
-                        //id3.Read(r);
-                        //this.meta = id3;
+                            //PxPre.WavLib.ID3 id3 = new PxPre.WavLib.ID3();
+                            //id3.Read(r);
+                            //this.meta = id3;
+                        }
                     }
+
+                    PxPre.Vinyl.Wav.ChunkFmt ? fmt;
+                    List<PxPre.Vinyl.Wav.AudioChunk> audios = 
+                        PxPre.Vinyl.Wav.WAVUtils.ParseStaticPCM(r, this.foundChunks, out fmt);
+
+                    float [] pcm = PxPre.Vinyl.Wav.WAVUtils.GetChannel(audios, 0);
+
+                    AudioClip ac = AudioClip.Create("", pcm.Length, this.format.numChannels, (int)this.format.sampleRate, false);
+                    ac.SetData(pcm, 0);
+                    this.audioSource.clip = ac;
+                    this.audioSource.loop = false;
+                    this.audioSource.Play();
                 }
-
-                PxPre.Vinyl.Wav.ChunkFmt ? fmt;
-                List<PxPre.Vinyl.Wav.AudioChunk> audios = 
-                    PxPre.Vinyl.Wav.WAVUtils.ParseStaticPCM(r, this.foundChunks, out fmt);
-
-                float [] pcm = PxPre.Vinyl.Wav.WAVUtils.GetChannel(audios, 0);
-
-                AudioClip ac = AudioClip.Create("", pcm.Length, this.format.numChannels, (int)this.format.sampleRate, false);
-                ac.SetData(pcm, 0);
-                this.audioSource.clip = ac;
-                this.audioSource.Play();
-            }
+                if(GUILayout.Button("Stream") == true)
+                {
+                    int streamSampleRate = 44100;
+                    PxPre.Vinyl.Wav.WAVStreamer ws = new PxPre.Vinyl.Wav.WAVStreamer(ts.path, streamSampleRate, 2);
+                    AudioClip ac = AudioClip.Create("", 44100, ws.wavChannels, ws.sampleRate, true);
+                    this.audioSource.loop = true;
+                    this.audioSource.clip = ac;
+                }
+            GUILayout.EndHorizontal();
         }
 
         GUILayout.Label($"Compression : {format.compressionCode}");

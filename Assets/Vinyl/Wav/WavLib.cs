@@ -302,6 +302,8 @@ namespace PxPre.Vinyl.Wav
 						if (fmt.HasValue == false)
 							continue;
 
+						r.BaseStream.Seek(ct.filePos, System.IO.SeekOrigin.Begin);
+
 						uint silentSamples = r.ReadUInt32();
 						ret.Add(new AudioChunk(silentSamples));
 						break;
