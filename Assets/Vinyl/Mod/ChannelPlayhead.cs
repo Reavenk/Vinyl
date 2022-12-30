@@ -347,7 +347,8 @@ namespace Vinyl.Mod
             bool setPeriodToTarget = true;
 
             // If we were recently inverted, chances are we're not anymore.
-            bool resetVolume = (this.lastEffect == Effect.InvertLoop);
+            bool shouldResetVolume = (this.lastEffect == Effect.InvertLoop);
+            bool shouldUpdateVolume = false;
             bool resetVib = true;
             bool resetTrem = true;
 
@@ -371,7 +372,7 @@ namespace Vinyl.Mod
                 this.divHolds = 0;
                 this.finetune = 1.0;
 
-                resetVolume = true;
+                shouldResetVolume = true;
             }
             else
             {
@@ -496,7 +497,8 @@ namespace Vinyl.Mod
                         {
                             int paramVol = mn * 16 + ln;
                             this.vol64 = paramVol;
-                            resetVolume = true;
+                            shouldResetVolume = false;
+                            shouldUpdateVolume = true;
                         }
                         break;
 
@@ -511,13 +513,13 @@ namespace Vinyl.Mod
                     case Effect.SetFinSlideUp:
                         this.period = Mathf.Max(113, this.period - ln);
                         this.UpdateSamplePlayIncrease();
-                        resetVolume = false;
+                        shouldResetVolume = false;
                         break;
 
                     case Effect.SetFinSlideDown:
                         this.period = Mathf.Min(856, this.period + ln);
                         this.UpdateSamplePlayIncrease();
-                        resetVolume = false;
+                        shouldResetVolume = false;
                         break;
 
                     case Effect.SetGlissando:
@@ -582,7 +584,7 @@ namespace Vinyl.Mod
                         break;
 
                     case Effect.InvertLoop:
-                        resetVolume = true;
+                        shouldResetVolume = true;
                         // The speed change is handled in UpdateSamplePlayIncrease().
                         break;
 
@@ -616,11 +618,13 @@ namespace Vinyl.Mod
             if (resetTrem == true)
                 this.tremoloPos = 0.0;
 
-            if (resetVolume == true && this.curSample != null)
+            if (shouldResetVolume == true && this.curSample != null) 
             {
                 this.vol64 = this.curSample.defaultVolume;
-                this.UpdateVolume();
+                shouldUpdateVolume = true;
             }
+            if(shouldUpdateVolume)
+                this.UpdateVolume();
 
             this.UpdateSamplePlayIncrease();
 

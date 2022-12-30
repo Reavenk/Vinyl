@@ -232,6 +232,7 @@ namespace Vinyl.Mod
                     p.channels[c].divs = new Div[64];
                 }
 
+                // Each pattern is broken up into 64 divisions
                 for(int j = 0; j < 64 * channelsCt; ++j)
                 {
                     int n = j/ channelsCt;
